@@ -1,0 +1,28 @@
+{
+  "total": 6,
+  "itemSummaries": [
+    {"itemId": "v1|1001|0", "title": "Travis Scott Cactus Jack Houston Astros Jersey Size L",
+     "price": {"value": "95.00", "currency": "USD"}, "buyingOptions": ["FIXED_PRICE"],
+     "itemWebUrl": "https://www.ebay.com/itm/1001", "condition": "Pre-owned",
+     "image": {"imageUrl": "https://i.ebayimg.com/images/g/1001/s-l500.jpg"},
+     "seller": {"username": "jerseyguy", "feedbackPercentage": "99.8"},
+     "shippingOptions": [{"shippingCostType": "FIXED", "shippingCost": {"value": "5.00", "currency": "USD"}}]},
+    {"itemId": "v1|1002|0", "title": "Travis Scott Astros Jersey Cactus Jack NWT XL",
+     "price": {"value": "180.00", "currency": "USD"}, "buyingOptions": ["FIXED_PRICE", "BEST_OFFER"],
+     "itemWebUrl": "https://www.ebay.com/itm/1002", "condition": "New with tags",
+     "shippingOptions": [{"shippingCost": {"value": "0.00", "currency": "USD"}}]},
+    {"itemId": "v1|1003|0", "title": "Travis Scott jersey REPLICA cactus jack",
+     "price": {"value": "25.00", "currency": "USD"}, "buyingOptions": ["FIXED_PRICE"],
+     "itemWebUrl": "https://www.ebay.com/itm/1003"},
+    {"itemId": "v1|1004|0", "title": "Travis Scott Astros Jersey auction",
+     "price": {"value": "150.00", "currency": "USD"}, "currentBidPrice": {"value": "40.00", "currency": "USD"},
+     "buyingOptions": ["AUCTION"], "itemEndDate": "2026-11-06T18:00:00.000Z",
+     "itemWebUrl": "https://www.ebay.com/itm/1004"},
+    {"itemId": "v1|1005|0", "title": "Travis Scott Utopia poster",
+     "price": {"value": "15.00", "currency": "USD"}, "buyingOptions": ["FIXED_PRICE"],
+     "itemWebUrl": "https://www.ebay.com/itm/1005"},
+    {"itemId": "v1|1006|0", "title": "Travis Scott Houston Jersey Mitchell & Ness",
+     "price": {"value": "160.00", "currency": "USD"}, "buyingOptions": ["FIXED_PRICE"],
+     "itemWebUrl": "https://www.ebay.com/itm/1006"}
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "total": 6,
+  "itemSales": [
+    {"itemId": "v1|2001|0", "title": "Travis Scott Cactus Jack Astros Jersey M", "lastSoldPrice": {"value": "150.00", "currency": "USD"}, "lastSoldDate": "2026-10-20T10:00:00.000Z", "totalSoldQuantity": 1},
+    {"itemId": "v1|2002|0", "title": "Travis Scott Astros Jersey L", "lastSoldPrice": {"value": "140.00", "currency": "USD"}, "lastSoldDate": "2026-10-11T10:00:00.000Z"},
+    {"itemId": "v1|2003|0", "title": "Travis Scott Jersey Cactus Jack XL", "lastSoldPrice": {"value": "165.00", "currency": "USD"}, "lastSoldDate": "2026-09-30T10:00:00.000Z"},
+    {"itemId": "v1|2004|0", "title": "Travis Scott Jersey Astros", "lastSoldPrice": {"value": "130.00", "currency": "USD"}, "lastSoldDate": "2026-09-12T10:00:00.000Z"},
+    {"itemId": "v1|2005|0", "title": "Travis Scott Jersey lot of 10 wholesale", "lastSoldPrice": {"value": "1400.00", "currency": "USD"}, "lastSoldDate": "2026-09-01T10:00:00.000Z"},
+    {"itemId": "v1|2006|0", "title": "Travis Scott Rodeo vinyl", "lastSoldPrice": {"value": "40.00", "currency": "USD"}, "lastSoldDate": "2026-09-01T10:00:00.000Z"}
+  ]
+}
