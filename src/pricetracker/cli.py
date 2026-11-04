@@ -9,6 +9,7 @@ from . import __version__
 from .adapters import get_adapter
 from .checker import check_all
 from .dashboard import write_dashboard
+from .finder.report import print_results, write_html
 from .history import PROVIDERS, HistoryError
 from .sinks import ConsoleSink, CsvHistorySink, Sink
 from .store import PriceStore, PriceStoreSink
@@ -39,11 +40,34 @@ def build_parser() -> argparse.ArgumentParser:
     dash.add_argument("--open", action="store_true", help="open the dashboard in your browser")
 
     sub.add_parser("list", help="show the watchlist and which adapter each item uses")
+
+    find = sub.add_parser("find", help="search eBay and Etsy for unique items (jerseys, limited drops) "
+                          "and flag listings priced under market value")
+    find.add_argument("keywords", nargs="?", help='what to search for, e.g. "travis scott jersey". '
+                      "Leave out to run every [[search]] in the watchlist")
+    find.add_argument("--max-price", type=float, help="always flag listings at or under this total")
+    find.add_argument("--min-price", type=float, help="ignore listings under this price")
+    find.add_argument("--exclude", help='comma-separated words that rule a listing out, e.g. "replica,kids"')
+    find.add_argument("--sites", help="comma-separated: ebay, etsy (default: every site with keys set)")
+    find.add_argument("--condition", choices=["new", "used"])
+    find.add_argument("--threshold", type=float, default=None,
+                      help="percent under market value that counts as a deal (default: 25)")
+    find.add_argument("--reference", type=float, help="your own market price; skips eBay sold prices")
+    find.add_argument("--match", choices=["all", "any"], default="all",
+                      help="title must contain all keywords (default) or any of them")
+    find.add_argument("--db", metavar="PATH", help="remember listings in this SQLite file, to spot new ones")
+    find.add_argument("--new-only", action="store_true", help="only show listings not seen before (needs --db)")
+    find.add_argument("--deals-only", action="store_true", help="only show deals")
+    find.add_argument("--limit", type=int, default=10, help="listings to print per search (default: 10)")
+    find.add_argument("--html", metavar="PATH", help="also write a results page with photos")
+    find.add_argument("--open", action="store_true", help="open the --html page in your browser")
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
+    if args.command == "find":
+        return _find(args)
     try:
         items = load_watchlist(args.watchlist)
     except WatchlistError as exc:
@@ -92,6 +116,46 @@ def main(argv: list[str] | None = None) -> int:
 
     # Exit 0 when everything was checked; 1 if any check failed.
     return 1 if any(not r.ok for r in results) else 0
+
+
+def _find(args) -> int:
+    from .finder import Finder, SeenStore, load_searches, make_spec
+
+    try:
+        if args.keywords:
+            specs = [make_spec(None, args.keywords, max_price=args.max_price, min_price=args.min_price,
+                               exclude=args.exclude, sites=args.sites, condition=args.condition,
+                               deal_threshold=args.threshold, reference_price=args.reference,
+                               match=args.match)]
+        else:
+            specs = load_searches(args.watchlist)
+            if not specs:
+                print(f"error: no [[search]] entries in {args.watchlist}; "
+                      'add some or pass keywords, e.g. pricetracker find "travis scott jersey"',
+                      file=sys.stderr)
+                return 2
+    except WatchlistError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
+    if args.new_only and not args.db:
+        print("error: --new-only needs --db to remember what you've already seen", file=sys.stderr)
+        return 2
+
+    seen = SeenStore(args.db) if args.db else None
+    finder = Finder(seen=seen)
+    results = [finder.find(spec) for spec in specs]
+    if seen:
+        seen.close()
+    notes = [finder.sold_unavailable] if finder.sold_unavailable else []
+    print_results(results, deals_only=args.deals_only, new_only=args.new_only, limit=args.limit, notes=notes)
+    if args.html:
+        out = write_html(results, args.html, notes=notes)
+        print(f"Wrote {out}")
+        if args.open:
+            import webbrowser
+
+            webbrowser.open(out.resolve().as_uri())
+    return 1 if any(r.errors for r in results) else 0
 
 
 def _backfill(items, db_path: str) -> int:

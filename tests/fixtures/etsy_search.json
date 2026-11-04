@@ -1,0 +1,11 @@
+{
+  "count": 2,
+  "results": [
+    {"listing_id": 3001, "title": "Travis Scott Cactus Jack Jersey &quot;Astroworld&quot; vintage style",
+     "price": {"amount": 8500, "divisor": 100, "currency_code": "USD"},
+     "url": "https://www.etsy.com/listing/3001/travis-scott-jersey", "state": "active"},
+    {"listing_id": 3002, "title": "Travis Scott jersey custom embroidered",
+     "price": {"amount": 4000, "divisor": 100, "currency_code": "USD"},
+     "url": "https://www.etsy.com/listing/3002", "state": "active"}
+  ]
+}

@@ -88,6 +88,61 @@ target_price = 700
 kind = "search"                 # report every listing at or below the target
 ```
 
+## Find deals on unique items
+
+Some things have no product page to watch: artist and tour jerseys, limited
+drops, vintage pieces. `pricetracker find` searches marketplaces by keyword
+and compares every listing with what that item actually **sold** for on
+eBay, so you can tell a real bargain from a normal asking price.
+
+```bash
+pricetracker find "travis scott jersey" --exclude replica,kids --max-price 120
+pricetracker find                                # every [[search]] in watchlist.toml
+pricetracker find --db prices.db --new-only      # only listings you haven't seen yet
+pricetracker find --html finds.html --open       # a page with photos
+```
+
+```
+== Travis Scott Cactus Jack jersey ==
+   Market value: $145.00 (median eBay sold price, last 90 days, 4 comps, $130.00 to $165.00)
+   [DEAL ] $85.00  Etsy  41% under market, Great deal
+            Travis Scott Cactus Jack Jersey "Astroworld" vintage style
+            https://www.etsy.com/listing/3001/travis-scott-jersey
+   [DEAL ] $95.00 + $5.00 ship  eBay  31% under market, Great deal
+            Travis Scott Cactus Jack Houston Astros Jersey Size L
+            https://www.ebay.com/itm/1001
+   [     ] $180.00  eBay  24% over market, Above market
+            Travis Scott Astros Jersey Cactus Jack NWT XL
+            https://www.ebay.com/itm/1002
+```
+
+Sites (official APIs only, no scraping):
+
+| Site | API | Keys |
+|---|---|---|
+| eBay | Browse API for live listings | `EBAY_CLIENT_ID`, `EBAY_CLIENT_SECRET`: a free production keyset from https://developer.ebay.com/my/keys |
+| eBay sold prices | Marketplace Insights API | Same keys, but eBay must approve your app for this API. Until then, market value is the median **asking** price of live Buy It Now listings, which runs higher than sale prices, so fewer things look like deals |
+| Etsy | Open API v3 | `ETSY_API_KEY` (and `ETSY_SHARED_SECRET` if Etsy asks for `keystring:secret`), free from https://www.etsy.com/developers/your-apps. Shipping isn't in Etsy's search results, so Etsy totals exclude it |
+
+How a listing is judged:
+
+- Its title must contain every keyword (`match = "any"` relaxes this) and
+  none of the `exclude` words. Marketplace search is loose, and excludes
+  such as `replica`, `custom` or `kids` filter out most of the noise.
+- **Market value** is the median eBay sold price over 90 days, from titles
+  that pass the same keyword filter, ignoring outliers such as bulk lots.
+  Set `reference_price` if you know the going rate better.
+- Total price (item + shipping) at least `deal_threshold` (default 25%)
+  under market value is a **Great deal**, 10% under is a **Good price**.
+  Anything at or under your `max_price` is always flagged.
+- More than 60% under market is labelled **Too cheap? Check it's real**:
+  for jerseys that usually means a fake, a kids' size or a scam. Auctions
+  show the current bid and its end time; the final price will be higher.
+
+With `--db`, listings are remembered so `--new-only` shows only new ones,
+and each search's market value is saved to the price table under
+`search:<name>` so it builds up a history.
+
 ## Dashboard
 
 `pricetracker dashboard` writes one self-contained HTML file (no server, no
@@ -111,6 +166,8 @@ Set these as environment variables; never commit them.
 |---|---|
 | `BESTBUY_API_KEY` | Best Buy prices (free at https://developer.bestbuy.com) |
 | `KEEPA_API_KEY` | Amazon price history backfill (paid) |
+| `EBAY_CLIENT_ID`, `EBAY_CLIENT_SECRET` | eBay search and sold prices for `find` (free at https://developer.ebay.com/my/keys) |
+| `ETSY_API_KEY`, `ETSY_SHARED_SECRET` | Etsy search for `find` (free at https://www.etsy.com/developers/your-apps) |
 | `FACEBOOK_COOKIE` | Logged-in Marketplace results: the `Cookie` header from your browser on facebook.com. Using it can get that account restricted. |
 
 ## How it's built
@@ -119,6 +176,7 @@ Set these as environment variables; never commit them.
 src/pricetracker/
   adapters/        one file per site; picks the adapter from the URL's domain
   history/         price-history providers (Keepa) for backfilling
+  finder/          keyword search on eBay and Etsy, scored against eBay sold prices
   sinks/           outputs: console, CSV
   store.py         SQLite price table shared by live checks and history
   dashboard.py     HTML dashboard with charts
