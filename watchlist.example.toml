@@ -62,3 +62,30 @@ kind = "search"   # set FACEBOOK_COOKIE for logged-in results
 name = "Example headphones (any store)"
 url = "https://www.example-store.com/products/headphones"
 target_price = 149.00
+
+# ---------------------------------------------------------------------------
+# Unique items: keyword searches instead of product pages.
+# `pricetracker find` searches eBay (and Etsy, if ETSY_API_KEY is set) and
+# judges every listing against what the item actually sold for on eBay.
+#
+#   keywords         what to search for; every word must be in the title
+#   exclude          words that rule a listing out (fakes, kids sizes, ...)
+#   max_price        always flag listings at or under this total (price + shipping)
+#   min_price        ignore listings under this
+#   deal_threshold   percent under market value that counts as a deal (default 25)
+#   reference_price  your own market price, if you know it better than eBay does
+#   condition        "new" or "used"
+#   sites            ["ebay", "etsy"]; default is every site with keys set
+#   match            "all" (default) or "any" keyword in the title
+
+[[search]]
+name = "Travis Scott Cactus Jack jersey"
+keywords = "travis scott jersey"
+exclude = ["replica", "custom", "kids", "youth", "inspired"]
+max_price = 120
+
+[[search]]
+name = "Bad Bunny jersey"
+keywords = "bad bunny jersey"
+exclude = ["replica", "custom", "kids", "youth"]
+deal_threshold = 30
