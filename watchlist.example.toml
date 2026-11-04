@@ -1,0 +1,64 @@
+# Copy this file to watchlist.toml and edit it.
+#
+# Each [[item]] is one thing to watch:
+#   name          a label for your own reference
+#   url           a product page, or a search results page for kind = "search"
+#   target_price  alert when the price is at or below this
+#   kind          optional: "product" (default) or "search" (a Craigslist or
+#                 Facebook Marketplace search page)
+#   product       optional: items with the same product name share one
+#                 dashboard chart, one line per store
+#   adapter       optional: force an adapter (amazon, bestbuy, walmart,
+#                 microcenter, craigslist, facebook, generic). Normally picked from the URL.
+#   asin / upc    optional: product ids used by price-history providers
+
+# Same product at two stores: `product` puts them on one chart.
+[[item]]
+name = "Kindle Paperwhite (Amazon)"
+product = "Kindle Paperwhite"
+url = "https://www.amazon.com/dp/B0CFPJYX7P"
+target_price = 99.99
+asin = "B0CFPJYX7P"   # optional: used by `pricetracker backfill` (Keepa)
+
+[[item]]
+name = "Kindle Paperwhite (Best Buy)"
+product = "Kindle Paperwhite"
+url = "https://www.bestbuy.com/site/kindle-paperwhite/6560000.p?skuId=6560000"
+target_price = 99.99
+
+[[item]]
+name = "Example TV (Best Buy, needs BESTBUY_API_KEY)"
+url = "https://www.bestbuy.com/site/example-tv/6500000.p?skuId=6500000"
+target_price = 399.99
+
+[[item]]
+name = "Example console (Walmart)"
+url = "https://www.walmart.com/ip/example/123456789"
+target_price = 449.00
+
+[[item]]
+name = "Example GPU (Micro Center, store-specific price)"
+url = "https://www.microcenter.com/product/000000/example-gpu?storeid=131"
+target_price = 549.99
+
+# Resale: a search watch reports every listing at or below the target.
+# Craigslist and Facebook forbid automated access in their terms and may
+# block you; checks to them are spaced out automatically (5s / 10s).
+[[item]]
+name = "Used RTX 4080 (Craigslist SF Bay)"
+url = "https://sfbay.craigslist.org/search/sss?query=rtx+4080"
+target_price = 700
+kind = "search"
+
+[[item]]
+name = "PS5 Slim (FB Marketplace)"
+url = "https://www.facebook.com/marketplace/sanfrancisco/search?query=ps5%20slim"
+target_price = 350
+kind = "search"   # set FACEBOOK_COOKIE for logged-in results
+
+# Any other store that publishes schema.org product data works with the
+# generic adapter (Newegg, B&H, Target and many others often do).
+[[item]]
+name = "Example headphones (any store)"
+url = "https://www.example-store.com/products/headphones"
+target_price = 149.00

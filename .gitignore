@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+dist/
+build/
+# local data written by the tracker
+price_history.csv
+dashboard.html
+prices.db
+watchlist.toml
