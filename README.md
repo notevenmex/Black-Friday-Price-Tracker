@@ -143,6 +143,85 @@ With `--db`, listings are remembered so `--new-only` shows only new ones,
 and each search's market value is saved to the price table under
 `search:<name>` so it builds up a history.
 
+## Use it from Claude
+
+The tracker comes with an MCP server, so you can run it by chatting with
+Claude in the **Claude desktop app** or **Claude Code**, with no commands to
+remember:
+
+> Find Travis Scott Cactus Jack jerseys under $120, no replicas or kids sizes.
+>
+> Save that as a search, and also watch a Bad Bunny jersey.
+>
+> Add https://www.target.com/p/... to my watchlist with a target of $399.
+>
+> Check my prices. Has the PS5 been cheaper than this in the last 90 days?
+>
+> Show me the dashboard.
+
+Claude picks the right tool, runs it on your computer and replies with the
+listings (links, price vs. market value, fake warnings). The tools:
+
+| Tool | What it does |
+|---|---|
+| `find_deals` | Keyword search on eBay and Etsy, scored against eBay sold prices; can open a results page with photos |
+| `add_saved_search` / `run_saved_searches` | Save keyword searches and re-run them, optionally showing only new listings |
+| `add_watch_item` / `check_prices` | Watch product pages with a target price and check them |
+| `show_watchlist` | What you're watching |
+| `price_history` | How a product's price, or a search's market value, has moved |
+| `build_dashboard` | Open the chart dashboard in your browser |
+
+Your files go in `~/.pricetracker/` (`watchlist.toml`, `prices.db`, the HTML
+pages). Set `PRICETRACKER_HOME` to use another folder, or
+`PRICETRACKER_WATCHLIST` / `PRICETRACKER_DB` to point at existing files.
+
+### Set it up
+
+1. Install with the Claude extra (inside the repository's virtual environment):
+
+   ```bash
+   pip install -e ".[claude]"
+   which pricetracker-mcp      # Windows: where pricetracker-mcp
+   ```
+
+   Note the full path it prints; you need it below.
+
+2. **Claude desktop app:** open Settings, then Developer, then Edit Config,
+   and add the server to `claude_desktop_config.json` (use your own path and
+   keys), then restart the app:
+
+   ```json
+   {
+     "mcpServers": {
+       "pricetracker": {
+         "command": "/Users/you/Black-Friday-Price-Tracker/.venv/bin/pricetracker-mcp",
+         "env": {
+           "EBAY_CLIENT_ID": "your-ebay-app-id",
+           "EBAY_CLIENT_SECRET": "your-ebay-cert-id",
+           "ETSY_API_KEY": "optional",
+           "BESTBUY_API_KEY": "optional"
+         }
+       }
+     }
+   }
+   ```
+
+   On Windows, write the path with doubled backslashes, like
+   `C:\\Users\\you\\Black-Friday-Price-Tracker\\.venv\\Scripts\\pricetracker-mcp.exe`.
+
+3. **Claude Code:** the repository's `.mcp.json` registers the server when
+   you start `claude` in this folder with the virtual environment active
+   (approve it when asked). To have it in every folder instead:
+
+   ```bash
+   claude mcp add pricetracker --scope user \
+     -e EBAY_CLIENT_ID=... -e EBAY_CLIENT_SECRET=... \
+     -- /full/path/to/.venv/bin/pricetracker-mcp
+   ```
+
+The server runs on your computer, so it works in the desktop app and
+Claude Code but not on claude.ai in a browser or on your phone.
+
 ## Dashboard
 
 `pricetracker dashboard` writes one self-contained HTML file (no server, no
@@ -182,6 +261,8 @@ src/pricetracker/
   dashboard.py     HTML dashboard with charts
   checker.py       runs the checks
   cli.py           the `pricetracker` command
+  toolkit.py       the same features as functions returning text
+  mcp_server.py    MCP server wrapping toolkit.py, so Claude can use the tracker
 ```
 
 **Add a store:** create `adapters/<store>.py` subclassing `SelectorAdapter`

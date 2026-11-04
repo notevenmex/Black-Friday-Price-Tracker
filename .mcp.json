@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "pricetracker": {
+      "command": "pricetracker-mcp",
+      "args": []
+    }
+  }
+}
